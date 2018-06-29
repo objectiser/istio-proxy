@@ -33,6 +33,10 @@ using DoneFunc = std::function<void(const ::google::protobuf::util::Status&)>;
 // completed, and passes response information in CheckResponse.
 using CheckDoneFunc = std::function<void(const CheckResponseInfo&)>;
 
+// Defines a function prototype used processing a service interface spec to
+// add attributes.
+using OnAttributeFunc = std::function<void(const std::string&, const std::string&)>;
+
 // Defines a function prototype used to cancel an asynchronous transport call.
 using CancelFunc = std::function<void()>;
 

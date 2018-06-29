@@ -33,6 +33,7 @@ class RequestHandlerImpl : public RequestHandler {
   // Makes a Check call.
   ::istio::mixerclient::CancelFunc Check(
       CheckData* check_data, HeaderUpdate* header_update,
+      ::istio::mixerclient::OnAttributeFunc on_attribute,
       ::istio::mixerclient::TransportCheckFunc transport,
       ::istio::mixerclient::CheckDoneFunc on_done) override;
 

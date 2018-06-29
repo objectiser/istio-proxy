@@ -33,10 +33,12 @@ class RequestHandler {
   // * extract forwarded attributes from client proxy
   // * extract attributes from the request
   // * extract attributes from the config.
+  // * notify support on_attribute handler of attributes
   // * if necessary, forward some attributes to downstream
   // * make a Check call.
   virtual ::istio::mixerclient::CancelFunc Check(
       CheckData* check_data, HeaderUpdate* header_update,
+      ::istio::mixerclient::OnAttributeFunc on_attribute,
       ::istio::mixerclient::TransportCheckFunc transport,
       ::istio::mixerclient::CheckDoneFunc on_done) = 0;
 

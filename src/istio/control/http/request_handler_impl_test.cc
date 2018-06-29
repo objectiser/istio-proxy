@@ -162,7 +162,7 @@ TEST_F(RequestHandlerImplTest, TestHandlerDisabledCheckReport) {
   ApplyPerRouteConfig(config, &per_route);
 
   auto handler = controller_->CreateRequestHandler(per_route);
-  handler->Check(&mock_data, &mock_header, nullptr,
+  handler->Check(&mock_data, &mock_header, nullptr, nullptr,
                  [](const CheckResponseInfo& info) {
                    EXPECT_TRUE(info.response_status.ok());
                  });
@@ -184,7 +184,10 @@ TEST_F(RequestHandlerImplTest, TestHandlerDisabledCheck) {
   ApplyPerRouteConfig(config, &per_route);
 
   auto handler = controller_->CreateRequestHandler(per_route);
-  handler->Check(&mock_data, &mock_header, nullptr,
+  handler->Check(&mock_data, &mock_header,
+                 [](const std::string&, const std::string&) {
+                 },
+                 nullptr,
                  [](const CheckResponseInfo& info) {
                    EXPECT_TRUE(info.response_status.ok());
                  });
@@ -215,7 +218,7 @@ TEST_F(RequestHandlerImplTest, TestPerRouteAttributes) {
   ApplyPerRouteConfig(config, &per_route);
 
   auto handler = controller_->CreateRequestHandler(per_route);
-  handler->Check(&mock_data, &mock_header, nullptr, nullptr);
+  handler->Check(&mock_data, &mock_header, nullptr, nullptr, nullptr);
 }
 
 TEST_F(RequestHandlerImplTest, TestDefaultRouteAttributes) {
@@ -248,7 +251,7 @@ TEST_F(RequestHandlerImplTest, TestDefaultRouteAttributes) {
   // destination.server is empty, will use default one
   Controller::PerRouteConfig config;
   auto handler = controller_->CreateRequestHandler(config);
-  handler->Check(&mock_data, &mock_header, nullptr, nullptr);
+  handler->Check(&mock_data, &mock_header, nullptr, nullptr, nullptr);
 }
 
 TEST_F(RequestHandlerImplTest, TestRouteAttributes) {
@@ -287,7 +290,7 @@ TEST_F(RequestHandlerImplTest, TestRouteAttributes) {
   Controller::PerRouteConfig config;
   config.destination_service = "route1";
   auto handler = controller_->CreateRequestHandler(config);
-  handler->Check(&mock_data, &mock_header, nullptr, nullptr);
+  handler->Check(&mock_data, &mock_header, nullptr, nullptr, nullptr);
 }
 
 TEST_F(RequestHandlerImplTest, TestPerRouteQuota) {
@@ -316,7 +319,7 @@ TEST_F(RequestHandlerImplTest, TestPerRouteQuota) {
   ApplyPerRouteConfig(config, &per_route);
 
   auto handler = controller_->CreateRequestHandler(per_route);
-  handler->Check(&mock_data, &mock_header, nullptr, nullptr);
+  handler->Check(&mock_data, &mock_header, nullptr, nullptr, nullptr);
 }
 
 TEST_F(RequestHandlerImplTest, TestPerRouteApiSpec) {
@@ -363,7 +366,11 @@ TEST_F(RequestHandlerImplTest, TestPerRouteApiSpec) {
   ApplyPerRouteConfig(config, &per_route);
 
   auto handler = controller_->CreateRequestHandler(per_route);
-  handler->Check(&mock_data, &mock_header, nullptr, nullptr);
+  handler->Check(&mock_data, &mock_header,
+                 [](const std::string& key, const std::string& val) {
+                   EXPECT_EQ("hello", key);
+                   EXPECT_EQ("world", val);
+                 }, nullptr, nullptr);
 }
 
 TEST_F(RequestHandlerImplTest, TestHandlerCheck) {
@@ -380,7 +387,7 @@ TEST_F(RequestHandlerImplTest, TestHandlerCheck) {
   ApplyPerRouteConfig(config, &per_route);
 
   auto handler = controller_->CreateRequestHandler(per_route);
-  handler->Check(&mock_data, &mock_header, nullptr, nullptr);
+  handler->Check(&mock_data, &mock_header, nullptr, nullptr, nullptr);
 }
 
 TEST_F(RequestHandlerImplTest, TestDefaultApiKey) {
@@ -411,7 +418,7 @@ TEST_F(RequestHandlerImplTest, TestDefaultApiKey) {
   // destionation.server is empty, will use default one
   Controller::PerRouteConfig config;
   auto handler = controller_->CreateRequestHandler(config);
-  handler->Check(&mock_data, &mock_header, nullptr, nullptr);
+  handler->Check(&mock_data, &mock_header, nullptr, nullptr, nullptr);
 }
 
 TEST_F(RequestHandlerImplTest, TestHandlerReport) {
@@ -477,7 +484,7 @@ TEST_F(RequestHandlerImplTest, TestEmptyConfig) {
 
   Controller::PerRouteConfig config;
   auto handler = controller_->CreateRequestHandler(config);
-  handler->Check(&mock_check, &mock_header, nullptr,
+  handler->Check(&mock_check, &mock_header, nullptr, nullptr,
                  [](const CheckResponseInfo& info) {
                    EXPECT_TRUE(info.response_status.ok());
                  });

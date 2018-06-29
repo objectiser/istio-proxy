@@ -136,6 +136,9 @@ FilterHeadersStatus Filter::decodeHeaders(HeaderMap& headers, bool) {
   headers_ = &headers;
   cancel_check_ = handler_->Check(
       &check_data, &header_update,
+      [this](const std::string& key, const std::string& val) {
+        decoder_callbacks_->activeSpan().setTag(key, val);
+      },
       control_.GetCheckTransport(decoder_callbacks_->activeSpan()),
       [this](const CheckResponseInfo& info) { completeCheck(info); });
   initiating_call_ = false;
